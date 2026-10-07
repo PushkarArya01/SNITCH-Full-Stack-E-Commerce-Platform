@@ -554,16 +554,18 @@ const ProductDetailPage = () => {
             </p>
           </div>
 
-          {/* ==========================================
-              SIZE SELECTOR
-          =========================================== */}
+  {/* ============================================================
+    SIZE / VOLUME SELECTOR
+============================================================ */}
 
 <div>
   <div className="flex items-center justify-between mb-2">
     <label className="text-xs font-bold uppercase tracking-wider text-black">
-      {product?.category === 'perfumes' ? 'Select Volume:' : 'Select Size:'}{' '}
+      {product?.category === 'perfumes'
+        ? 'Select Volume:'
+        : 'Select Size:'}{' '}
       <span className="font-semibold text-zinc-500">
-        {selectedSize}
+        {selectedSize || 'Select'}
       </span>
     </label>
 
@@ -579,17 +581,24 @@ const ProductDetailPage = () => {
     )}
   </div>
 
+  {/* SIZE / VOLUME BUTTONS */}
+
   <div
     className={`grid gap-2 ${
       product?.category === 'perfumes'
         ? 'grid-cols-3'
-        : 'grid-cols-5'
+        : 'grid-cols-3 sm:grid-cols-5'
     }`}
   >
     {product?.sizes?.map((sizeItem) => {
-      const sizeName = sizeItem.size;
-      const stock = Number(sizeItem.stock) || 0;
+      const sizeName = sizeItem?.size;
+      const stock = Math.max(
+        0,
+        Number(sizeItem?.stock) || 0
+      );
+
       const unavailable = stock <= 0;
+      const isSelected = selectedSize === sizeName;
 
       return (
         <button
@@ -606,32 +615,54 @@ const ProductDetailPage = () => {
           className={`py-2.5 px-1 text-xs font-bold uppercase border transition-all ${
             unavailable
               ? 'border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed'
-              : selectedSize === sizeName
+              : isSelected
               ? 'border-black bg-black text-white cursor-pointer'
               : 'border-zinc-300 hover:border-black bg-white text-black cursor-pointer'
           }`}
         >
-          <span className={unavailable ? 'line-through' : ''}>
+          {/* SIZE / VOLUME */}
+          <span
+            className={
+              unavailable
+                ? 'line-through'
+                : ''
+            }
+          >
             {sizeName}
           </span>
 
-          {unavailable && (
-            <span className="block text-[8px] mt-0.5 normal-case tracking-normal">
-              Unavailable
-            </span>
-          )}
+          {/* STOCK QUANTITY */}
+          <span
+            className={`block text-[9px] mt-1 normal-case tracking-normal ${
+              isSelected
+                ? 'text-zinc-300'
+                : unavailable
+                ? 'text-zinc-400'
+                : 'text-zinc-500'
+            }`}
+          >
+            {unavailable
+              ? 'Unavailable'
+              : `${stock} available`}
+          </span>
         </button>
       );
     })}
   </div>
 
+  {/* SIZE ERROR */}
+
   {sizeError && (
     <p className="text-xs text-red-600 font-semibold mt-2">
       Please select a{' '}
-      {product?.category === 'perfumes' ? 'volume' : 'size'}{' '}
+      {product?.category === 'perfumes'
+        ? 'volume'
+        : 'size'}{' '}
       before adding to bag.
     </p>
   )}
+
+  {/* STOCK ERROR */}
 
   {stockError && (
     <p className="text-xs text-red-600 font-semibold mt-2">
