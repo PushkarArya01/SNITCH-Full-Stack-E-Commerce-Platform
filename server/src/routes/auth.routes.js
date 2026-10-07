@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { registerValidator, loginValidator } from "../validators/auth.validator.js"
-import { register, login, refresh, getMe } from "../controller/auth.controller.js"
+import { register, login, refresh, getMe, logout } from "../controller/auth.controller.js"
 import { authenticate } from "../middlewares/auth.middleware.js"
 
 
@@ -30,6 +30,13 @@ router.post("/login", loginValidator, login)
  * @POST /api/auth/refresh
  */
 router.post('/refresh', refresh)
+
+
+/**
+ * @post /api/auth/logout
+ */
+router.post('/logout', logout)
+
 
 
 /**

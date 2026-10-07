@@ -13,6 +13,19 @@ const productSchema = new mongoose.Schema({
         minLength: 20,
         maxLength: 500
     },
+    category: {
+    type: String,
+    enum: [
+        "shirts",
+        "t-shirts",
+        "bottoms",
+        "oversized",
+        "luxe",
+        "co-ords",
+        "perfumes"
+    ],
+    required: true
+},
     images: {
         type: [ {
             type: String

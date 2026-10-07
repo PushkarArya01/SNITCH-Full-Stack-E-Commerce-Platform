@@ -1,69 +1,61 @@
 import { Router } from "express";
 
 import {
-    addToCartValidator,
-    updateCartValidator,
-    removeFromCartValidator
-} from "../validators/cart.validator.js";
-
-import { authenticate } from "../middlewares/auth.middleware.js";
+    authenticate,
+    authenticateSeller
+} from "../middlewares/auth.middleware.js";
 
 import {
-    addToCart,
-    getCart,
-    updateCartQuantity,
-    removeFromCart
-} from "../controller/cart.controller.js";
-
+    createOrder,
+    getMyOrders,
+    getSellerOrders,
+    updateSellerOrderStatus
+} from "../controller/order.controller.js";
 
 const router = Router();
 
+// ============================================================
+// GET MY ORDERS - CUSTOMER
+// ============================================================
+
+router.get(
+    "/my-orders",
+    authenticate,
+    getMyOrders
+);
 
 // ============================================================
-// ADD PRODUCT TO CART
+// GET SELLER ORDERS
+// SELLER ONLY
+// ============================================================
+
+router.get(
+    "/seller-orders",
+    authenticate,
+    authenticateSeller,
+    getSellerOrders
+);
+
+// ============================================================
+// UPDATE SELLER ORDER STATUS
+// SELLER ONLY
+// ============================================================
+
+router.patch(
+    "/:orderId/status",
+    authenticate,
+    authenticateSeller,
+    updateSellerOrderStatus
+);
+
+// ============================================================
+// CREATE ORDER
 // ============================================================
 
 router.post(
     "/",
     authenticate,
-    addToCartValidator,
-    addToCart
+    createOrder
 );
-
-
-// ============================================================
-// GET USER CART
-// ============================================================
-
-router.get(
-    "/",
-    authenticate,
-    getCart
-);
-
-
-// ============================================================
-// UPDATE CART QUANTITY
-// ============================================================
-
-router.patch(
-    "/",
-    authenticate,
-    updateCartValidator,
-    updateCartQuantity
-);
-
-
-// ============================================================
-// REMOVE PRODUCT FROM CART
-// ============================================================
-
-router.delete(
-    "/",
-    authenticate,
-    removeFromCartValidator,
-    removeFromCart
-);
-
 
 export default router;

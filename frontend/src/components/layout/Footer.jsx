@@ -135,8 +135,6 @@ const Footer = () => {
               <li><a href="#" className="hover:text-white transition">Our Story</a></li>
               <li><a href="#" className="hover:text-white transition">Terms & Conditions</a></li>
               <li><a href="#" className="hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition">Careers at Snitch</a></li>
-              <li><a href="#" className="hover:text-white transition">Cohort-3 Backend API</a></li>
             </ul>
           </div>
         </div>
