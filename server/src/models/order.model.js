@@ -27,7 +27,17 @@ const orderItemSchema = new mongoose.Schema(
 
     size: {
       type: String,
-      enum: ["XS", "S", "M", "L", "XL", "XXL"],
+      enum: [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "50ml",
+        "100ml",
+        "150ml",
+      ],
       required: true,
     },
 
@@ -178,7 +188,12 @@ const orderSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
-      enum: ["Pending", "Paid", "Failed", "Refunded"],
+      enum: [
+        "Pending",
+        "Paid",
+        "Failed",
+        "Refunded",
+      ],
       default: "Pending",
     },
 
@@ -200,6 +215,9 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-const orderModel = mongoose.model("Order", orderSchema);
+const orderModel = mongoose.model(
+  "Order",
+  orderSchema
+);
 
 export default orderModel;
