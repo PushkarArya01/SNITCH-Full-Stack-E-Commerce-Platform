@@ -8,16 +8,16 @@ import orderRoutes from "../routes/order.routes.js";
 const app = express();
 
 // ============================================================
-// CORS
+// CORS CONFIGURATION
 // ============================================================
 
 const allowedOrigins = [
-    "https://snitch-full-stack-e-commerce-platform.vercel.app",
     process.env.FRONTEND_URL,
-];
+    "https://snitch-full-stack-e-commerce-platform.vercel.app",
+].filter(Boolean);
 
 app.use((req, res, next) => {
-    const origin = req.get("origin");
+    const origin = req.headers.origin;
 
     const isLocalOrigin =
         /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(
@@ -26,10 +26,7 @@ app.use((req, res, next) => {
 
     const isAllowedOrigin =
         origin &&
-        (
-            allowedOrigins.includes(origin) ||
-            isLocalOrigin
-        );
+        (allowedOrigins.includes(origin) || isLocalOrigin);
 
     if (isAllowedOrigin) {
         res.setHeader(
@@ -58,6 +55,7 @@ app.use((req, res, next) => {
         );
     }
 
+    // Handle preflight request
     if (req.method === "OPTIONS") {
         return res.sendStatus(204);
     }
@@ -70,6 +68,7 @@ app.use((req, res, next) => {
 // ============================================================
 
 app.use(express.json());
+
 app.use(cookieParser());
 
 // ============================================================
@@ -77,8 +76,11 @@ app.use(cookieParser());
 // ============================================================
 
 app.use("/api/auth", authRoutes);
+
 app.use("/api/products", productRoutes);
+
 app.use("/api/cart", cartRoutes);
+
 app.use("/api/orders", orderRoutes);
 
 export default app;
