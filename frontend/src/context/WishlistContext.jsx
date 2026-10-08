@@ -14,15 +14,7 @@ export const WishlistProvider = ({ children }) => {
 
   const [wishlist, setWishlist] = useState([]);
 
-  // ============================================================
-  // GET USER ID
-  // ============================================================
-
   const userId = user?.id ? String(user.id) : null;
-
-  // ============================================================
-  // GET USER-SPECIFIC WISHLIST KEY
-  // ============================================================
 
   const getWishlistKey = () => {
     if (!userId) {
@@ -32,20 +24,21 @@ export const WishlistProvider = ({ children }) => {
     return `snitch_wishlist_${userId}`;
   };
 
-  // ============================================================
-  // LOAD WISHLIST WHEN USER CHANGES
-  // ============================================================
-
+  // Load wishlist when user logs in or changes
   useEffect(() => {
-    // User is logged out
     if (!isAuthenticated || !userId) {
       setWishlist([]);
       return;
     }
 
-    try {
-      const key = `snitch_wishlist_${userId}`;
+    const key = getWishlistKey();
 
+    if (!key) {
+      setWishlist([]);
+      return;
+    }
+
+    try {
       const saved = localStorage.getItem(key);
 
       if (saved) {
@@ -57,107 +50,75 @@ export const WishlistProvider = ({ children }) => {
           setWishlist([]);
         }
       } else {
-        // New user = empty wishlist
         setWishlist([]);
       }
-    } catch (error) {
-      console.error(
-        "Failed to load wishlist:",
-        error
-      );
-
+    } catch {
       setWishlist([]);
     }
   }, [isAuthenticated, userId]);
 
-  // ============================================================
-  // SAVE WISHLIST FOR CURRENT USER
-  // ============================================================
-
+  // Save wishlist for current user
   useEffect(() => {
-    // Don't save anything when logged out
     if (!isAuthenticated || !userId) {
       return;
     }
 
-    try {
-      const key = `snitch_wishlist_${userId}`;
+    const key = getWishlistKey();
 
+    if (!key) {
+      return;
+    }
+
+    try {
       localStorage.setItem(
         key,
         JSON.stringify(wishlist)
       );
-    } catch (error) {
-      console.error(
-        "Failed to save wishlist:",
-        error
-      );
+    } catch {
+      // Ignore localStorage errors
     }
   }, [wishlist, isAuthenticated, userId]);
 
-  // ============================================================
-  // ADD / REMOVE WISHLIST
-  // ============================================================
-
+  // Add / remove product
   const toggleWishlist = (product) => {
     if (!isAuthenticated || !userId) {
-      console.log(
-        "Please login to use wishlist"
-      );
-
       return;
     }
 
     setWishlist((prev) => {
       const exists = prev.some(
         (item) =>
-          String(item.id) ===
-          String(product.id)
+          String(item.id) === String(product.id)
       );
 
-      // REMOVE
       if (exists) {
         return prev.filter(
           (item) =>
-            String(item.id) !==
-            String(product.id)
+            String(item.id) !== String(product.id)
         );
       }
 
-      // ADD
       return [...prev, product];
     });
   };
 
-  // ============================================================
-  // CHECK PRODUCT
-  // ============================================================
-
+  // Check wishlist
   const isInWishlist = (productId) => {
     return wishlist.some(
       (item) =>
-        String(item.id) ===
-        String(productId)
+        String(item.id) === String(productId)
     );
   };
 
-  // ============================================================
-  // REMOVE PRODUCT
-  // ============================================================
-
+  // Remove product
   const removeFromWishlist = (productId) => {
     setWishlist((prev) =>
       prev.filter(
         (item) =>
-          String(item.id) !==
-          String(productId)
+          String(item.id) !== String(productId)
       )
     );
   };
-
-  // ============================================================
-  // CONTEXT
-  // ============================================================
 
   return (
     <WishlistContext.Provider
@@ -173,10 +134,6 @@ export const WishlistProvider = ({ children }) => {
     </WishlistContext.Provider>
   );
 };
-
-// ============================================================
-// CUSTOM HOOK
-// ============================================================
 
 export const useWishlist = () => {
   const context = useContext(WishlistContext);
