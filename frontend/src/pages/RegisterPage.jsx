@@ -7,6 +7,8 @@ import {
   Lock,
   CheckCircle,
   ArrowLeft,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
@@ -22,6 +24,10 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
   });
+
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -120,7 +126,7 @@ const RegisterPage = () => {
               </label>
 
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
                   type="text"
@@ -141,7 +147,7 @@ const RegisterPage = () => {
               </label>
 
               <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
                   type="email"
@@ -162,7 +168,7 @@ const RegisterPage = () => {
               </label>
 
               <div className="relative">
-                <Phone className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
                   type="tel"
@@ -182,17 +188,25 @@ const RegisterPage = () => {
               </label>
 
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-3 text-sm border border-zinc-300 focus:border-black outline-none transition"
+                  className="w-full pl-9 pr-10 py-3 text-sm border border-zinc-300 focus:border-black outline-none transition"
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-black focus:outline-none transition cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
@@ -203,17 +217,25 @@ const RegisterPage = () => {
               </label>
 
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-3 text-sm border border-zinc-300 focus:border-black outline-none transition"
+                  className="w-full pl-9 pr-10 py-3 text-sm border border-zinc-300 focus:border-black outline-none transition"
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-black focus:outline-none transition cursor-pointer"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
