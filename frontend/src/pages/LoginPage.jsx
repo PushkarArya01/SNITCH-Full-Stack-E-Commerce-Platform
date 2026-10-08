@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Lock, Mail, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Lock, Mail, CheckCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
@@ -12,6 +12,8 @@ const LoginPage = () => {
     password: '',
   });
 
+
+  const [showPassword, setShowPassword] = useState(false); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -96,7 +98,7 @@ const LoginPage = () => {
               </label>
 
               <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
                   type="email"
@@ -117,17 +119,26 @@ const LoginPage = () => {
               </label>
 
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-zinc-400" />
+                <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
 
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-3 text-sm border border-zinc-300 focus:border-black outline-none transition"
+                  className="w-full pl-9 pr-10 py-3 text-sm border border-zinc-300 focus:border-black outline-none transition"
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-black focus:outline-none transition cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+                
               </div>
             </div>
 
