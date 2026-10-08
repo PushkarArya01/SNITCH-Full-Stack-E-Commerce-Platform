@@ -70,6 +70,8 @@ const Footer = () => {
               ) : (
                 <form onSubmit={handleSubscribe} className="flex max-w-md">
                   <input
+                   id="newsletter-email"
+                     name="email"
                     type="email"
                     required
                     placeholder="Enter your email"

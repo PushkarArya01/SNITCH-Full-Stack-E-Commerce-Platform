@@ -30,7 +30,6 @@ export const CartProvider = ({ children }) => {
 
   const [cartItems, setCartItems] = useState([]);
   const [cartLoading, setCartLoading] = useState(false);
-
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // ============================================================
@@ -118,16 +117,7 @@ export const CartProvider = ({ children }) => {
         setCartItems([]);
       }
     } catch (error) {
-      console.error(
-        "Failed to load cart:",
-        error
-      );
-
-      console.error(
-        "Cart load error response:",
-        error?.response?.data
-      );
-
+      // Keep expected cart loading errors silent.
       setCartItems([]);
     } finally {
       setCartLoading(false);
@@ -194,7 +184,49 @@ export const CartProvider = ({ children }) => {
       }
 
       // --------------------------------------------------------
-      // Add product to backend
+      // FRONTEND STOCK CHECK
+      // --------------------------------------------------------
+
+      const selectedSize = product?.sizes?.find(
+        (item) => item?.size === size
+      );
+
+      const availableStock =
+        Number(selectedSize?.stock) || 0;
+
+      // Check current quantity already in cart
+      const existingCartItem = cartItems.find(
+        (item) => {
+          const itemProductId =
+            getProductId(item?.product);
+
+          return (
+            String(itemProductId) ===
+              String(productId) &&
+            item?.size === size
+          );
+        }
+      );
+
+      const currentCartQuantity =
+        Number(existingCartItem?.quantity) || 0;
+
+      const requestedTotal =
+        currentCartQuantity + finalQuantity;
+
+      // --------------------------------------------------------
+      // STOP BEFORE API CALL
+      // --------------------------------------------------------
+
+      if (requestedTotal > availableStock) {
+        return {
+          success: false,
+          message: "Insufficient stock",
+        };
+      }
+
+      // --------------------------------------------------------
+      // ADD PRODUCT TO BACKEND
       // --------------------------------------------------------
 
       await cartApi.addToCart({
@@ -204,9 +236,7 @@ export const CartProvider = ({ children }) => {
       });
 
       // --------------------------------------------------------
-      // IMPORTANT:
-      // Always get fresh cart from backend.
-      // This prevents stale frontend quantity.
+      // ALWAYS GET FRESH CART FROM BACKEND
       // --------------------------------------------------------
 
       await loadCart();
@@ -218,16 +248,7 @@ export const CartProvider = ({ children }) => {
         success: true,
       };
     } catch (error) {
-      console.error(
-        "Failed to add product to cart:",
-        error
-      );
-
-      console.error(
-        "Add cart error response:",
-        error?.response?.data
-      );
-
+      // Keep expected backend errors silent.
       return {
         success: false,
         message:
@@ -264,8 +285,7 @@ export const CartProvider = ({ children }) => {
       }
 
       // --------------------------------------------------------
-      // IMPORTANT:
-      // Delete item from BACKEND.
+      // Delete item from BACKEND
       // --------------------------------------------------------
 
       await cartApi.removeFromCart({
@@ -283,16 +303,7 @@ export const CartProvider = ({ children }) => {
         success: true,
       };
     } catch (error) {
-      console.error(
-        "Failed to remove product from cart:",
-        error
-      );
-
-      console.error(
-        "Remove cart error response:",
-        error?.response?.data
-      );
-
+      // Keep expected backend errors silent.
       return {
         success: false,
         message:
@@ -316,7 +327,7 @@ export const CartProvider = ({ children }) => {
         String(productId);
 
       // --------------------------------------------------------
-      // Find current item
+      // FIND CURRENT CART ITEM
       // --------------------------------------------------------
 
       const currentItem = cartItems.find(
@@ -333,10 +344,6 @@ export const CartProvider = ({ children }) => {
       );
 
       if (!currentItem) {
-        console.error(
-          "Product not found in frontend cart"
-        );
-
         return {
           success: false,
           message: "Product not found in cart",
@@ -353,8 +360,8 @@ export const CartProvider = ({ children }) => {
         currentQuantity + quantityChange;
 
       // --------------------------------------------------------
-      // If quantity becomes 0:
-      // ACTUALLY DELETE FROM BACKEND
+      // IF QUANTITY BECOMES 0
+      // DELETE FROM BACKEND
       // --------------------------------------------------------
 
       if (newQuantity <= 0) {
@@ -365,7 +372,33 @@ export const CartProvider = ({ children }) => {
       }
 
       // --------------------------------------------------------
-      // Update quantity in backend
+      // FRONTEND STOCK CHECK
+      // --------------------------------------------------------
+
+      const product =
+        currentItem?.product;
+
+      const selectedSize =
+        product?.sizes?.find(
+          (item) => item?.size === size
+        );
+
+      const availableStock =
+        Number(selectedSize?.stock) || 0;
+
+      // --------------------------------------------------------
+      // STOP BEFORE API CALL
+      // --------------------------------------------------------
+
+      if (newQuantity > availableStock) {
+        return {
+          success: false,
+          message: "Insufficient stock",
+        };
+      }
+
+      // --------------------------------------------------------
+      // UPDATE QUANTITY IN BACKEND
       // --------------------------------------------------------
 
       await cartApi.updateQuantity({
@@ -375,7 +408,7 @@ export const CartProvider = ({ children }) => {
       });
 
       // --------------------------------------------------------
-      // Refresh cart from backend
+      // REFRESH CART FROM BACKEND
       // --------------------------------------------------------
 
       await loadCart();
@@ -384,16 +417,7 @@ export const CartProvider = ({ children }) => {
         success: true,
       };
     } catch (error) {
-      console.error(
-        "Failed to update cart quantity:",
-        error
-      );
-
-      console.error(
-        "Update cart error response:",
-        error?.response?.data
-      );
-
+      // Keep expected backend errors silent.
       return {
         success: false,
         message:

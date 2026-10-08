@@ -560,14 +560,14 @@ const ProductDetailPage = () => {
 
 <div>
   <div className="flex items-center justify-between mb-2">
-    <label className="text-xs font-bold uppercase tracking-wider text-black">
-      {product?.category === 'perfumes'
-        ? 'Select Volume:'
-        : 'Select Size:'}{' '}
-      <span className="font-semibold text-zinc-500">
-        {selectedSize || 'Select'}
-      </span>
-    </label>
+<div className="text-xs font-bold uppercase tracking-wider text-black">
+  {product?.category === 'perfumes'
+    ? 'Select Volume:'
+    : 'Select Size:'}{' '}
+  <span className="font-semibold text-zinc-500">
+    {selectedSize || 'Select'}
+  </span>
+</div>
 
     {product?.category !== 'perfumes' && (
       <button

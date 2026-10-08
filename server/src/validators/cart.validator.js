@@ -1,6 +1,5 @@
 import { body, validationResult } from "express-validator";
 
-
 // ============================================================
 // ADD TO CART VALIDATOR
 // ============================================================
@@ -17,7 +16,6 @@ export const addToCartValidator = [
         .isMongoId()
         .withMessage("Product ID must be a valid Mongo ID"),
 
-
     body("quantity")
         .exists()
         .withMessage("Quantity is required")
@@ -26,7 +24,6 @@ export const addToCartValidator = [
         .withMessage(
             "Quantity must be an integer greater than 0"
         ),
-
 
     body("size")
         .exists()
@@ -41,12 +38,14 @@ export const addToCartValidator = [
             "M",
             "L",
             "XL",
-            "XXL"
+            "XXL",
+            "50ml",
+            "100ml",
+            "150ml"
         ])
         .withMessage(
-            "Size must be one of XS, S, M, L, XL, XXL"
+            "Size must be one of XS, S, M, L, XL, XXL, 50ml, 100ml, 150ml"
         ),
-
 
     (req, res, next) => {
 
@@ -86,7 +85,6 @@ export const updateCartValidator = [
             "Product ID must be a valid Mongo ID"
         ),
 
-
     body("quantity")
         .exists()
         .withMessage("Quantity is required")
@@ -95,7 +93,6 @@ export const updateCartValidator = [
         .withMessage(
             "Quantity must be an integer greater than 0"
         ),
-
 
     body("size")
         .exists()
@@ -112,12 +109,14 @@ export const updateCartValidator = [
             "M",
             "L",
             "XL",
-            "XXL"
+            "XXL",
+            "50ml",
+            "100ml",
+            "150ml"
         ])
         .withMessage(
-            "Size must be one of XS, S, M, L, XL, XXL"
+            "Size must be one of XS, S, M, L, XL, XXL, 50ml, 100ml, 150ml"
         ),
-
 
     (req, res, next) => {
 
@@ -126,11 +125,8 @@ export const updateCartValidator = [
         if (!errors.isEmpty()) {
 
             return res.status(400).json({
-
                 message: "Validation failed",
-
                 errors: errors.array()
-
             });
 
         }
@@ -160,7 +156,6 @@ export const removeFromCartValidator = [
             "Product ID must be a valid Mongo ID"
         ),
 
-
     body("size")
         .exists()
         .withMessage("Size is required")
@@ -176,12 +171,14 @@ export const removeFromCartValidator = [
             "M",
             "L",
             "XL",
-            "XXL"
+            "XXL",
+            "50ml",
+            "100ml",
+            "150ml"
         ])
         .withMessage(
-            "Size must be one of XS, S, M, L, XL, XXL"
+            "Size must be one of XS, S, M, L, XL, XXL, 50ml, 100ml, 150ml"
         ),
-
 
     (req, res, next) => {
 
@@ -190,11 +187,8 @@ export const removeFromCartValidator = [
         if (!errors.isEmpty()) {
 
             return res.status(400).json({
-
                 message: "Validation failed",
-
                 errors: errors.array()
-
             });
 
         }
