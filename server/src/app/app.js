@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import authRoutes from "../routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import productRoutes from "../routes/products.routes.js";
@@ -7,73 +8,66 @@ import orderRoutes from "../routes/order.routes.js";
 
 const app = express();
 
-// ============================================================
-// CORS CONFIGURATION
-// ============================================================
+/* ============================================================
+   CORS CONFIGURATION
+   ============================================================ */
+
+const productionFrontend =
+    "https://snitch-full-stack-e-commerce-platform.vercel.app";
 
 const allowedOrigins = [
+    productionFrontend,
     process.env.FRONTEND_URL,
-    "https://snitch-full-stack-e-commerce-platform.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
 ].filter(Boolean);
 
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow requests without an Origin header
+            // such as Postman/server-to-server requests.
+            if (!origin) {
+                return callback(null, true);
+            }
 
-    const isLocalOrigin =
-        /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(
-            origin || ""
-        );
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
-    const isAllowedOrigin =
-        origin &&
-        (allowedOrigins.includes(origin) || isLocalOrigin);
+            return callback(
+                new Error(`CORS blocked origin: ${origin}`)
+            );
+        },
 
-    if (isAllowedOrigin) {
-        res.setHeader(
-            "Access-Control-Allow-Origin",
-            origin
-        );
+        credentials: true,
 
-        res.setHeader(
-            "Access-Control-Allow-Credentials",
-            "true"
-        );
+        methods: [
+            "GET",
+            "POST",
+            "PATCH",
+            "DELETE",
+            "OPTIONS",
+        ],
 
-        res.setHeader(
-            "Access-Control-Allow-Headers",
-            "Content-Type, Authorization"
-        );
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+        ],
+    })
+);
 
-        res.setHeader(
-            "Access-Control-Allow-Methods",
-            "GET, POST, PATCH, DELETE, OPTIONS"
-        );
-
-        res.setHeader(
-            "Vary",
-            "Origin"
-        );
-    }
-
-    // Handle preflight request
-    if (req.method === "OPTIONS") {
-        return res.sendStatus(204);
-    }
-
-    next();
-});
-
-// ============================================================
-// BODY PARSERS
-// ============================================================
+/* ============================================================
+   BODY PARSERS
+   ============================================================ */
 
 app.use(express.json());
 
 app.use(cookieParser());
 
-// ============================================================
-// ROUTES
-// ============================================================
+/* ============================================================
+   ROUTES
+   ============================================================ */
 
 app.use("/api/auth", authRoutes);
 
